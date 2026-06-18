@@ -3,34 +3,25 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
-    <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="DIST Buying" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="application-name" content="DIST Buying" />
     <meta name="theme-color" content="#006241" />
-
     <title>DIST Buying</title>
     <link rel="manifest" href="manifest.json" />
-
     <link rel="apple-touch-icon" href="icons/icon-192.png" />
     <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png" />
     <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png" />
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #006241; }
-        #app-frame { position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; display: block; }
+        html, body { width: 100%; height: 100%; background: #006241; }
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #006241; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 9999;
-            transition: opacity 0.5s ease;
+            align-items: center; justify-content: center;
         }
-        #loader.hidden { opacity: 0; pointer-events: none; }
         .loader-logo {
             width: 100px; height: 100px; background: white; border-radius: 22px;
             display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
@@ -42,16 +33,6 @@
             border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        #error-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; display: none; flex-direction: column;
-            align-items: center; justify-content: center; padding: 32px; z-index: 9998;
-        }
-        #error-screen.show { display: flex; }
-        .error-icon { font-size: 64px; margin-bottom: 20px; }
-        .error-title { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; font-family: sans-serif; }
-        .error-msg { font-size: 15px; color: #757575; text-align: center; line-height: 1.6; margin-bottom: 32px; font-family: sans-serif; }
-        .retry-btn { background: #006241; color: white; border: none; padding: 14px 40px; border-radius: 8px; font-size: 16px; font-family: sans-serif; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -60,24 +41,14 @@
         <div class="loader-text">DIST Buying</div>
         <div class="spinner"></div>
     </div>
-    <div id="error-screen">
-        <div class="error-icon">📶</div>
-        <div class="error-title">No Connection</div>
-        <div class="error-msg">Please check your internet connection and try again.</div>
-        <button class="retry-btn" onclick="retryLoad()">Try Again</button>
-    </div>
-    <iframe id="app-frame" src="https://etp.benetton.co.in:8089" allow="camera; microphone; geolocation; payment" allowfullscreen></iframe>
     <script>
-        const loader = document.getElementById('loader');
-        const errorScreen = document.getElementById('error-screen');
-        const frame = document.getElementById('app-frame');
-        frame.addEventListener('load', function () { setTimeout(function () { loader.classList.add('hidden'); }, 500); });
-        frame.addEventListener('error', function () { loader.classList.add('hidden'); errorScreen.classList.add('show'); });
-        if (!navigator.onLine) { loader.classList.add('hidden'); errorScreen.classList.add('show'); }
-        function retryLoad() {
-            if (navigator.onLine) { errorScreen.classList.remove('show'); loader.classList.remove('hidden'); frame.src = 'https://etp.benetton.co.in:8089'; }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
         }
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+        // Redirect to the actual website after showing splash screen
+        setTimeout(function() {
+            window.location.href = 'https://etp.benetton.co.in:8089';
+        }, 1500);
     </script>
 </body>
 </html>
